@@ -15,8 +15,25 @@ class _SignUpState extends State<SignUp> {
     try {
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: "barry.allen@example.com",
-        password: "password",
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void signInAction() async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -55,6 +72,10 @@ class _SignUpState extends State<SignUp> {
             ElevatedButton(
               child: Text('Signup'),
               onPressed: () async => {signUpAction()},
+            ),
+            ElevatedButton(
+              child: Text('Signin'),
+              onPressed: () async => {signInAction()},
             )
           ],
         )),
